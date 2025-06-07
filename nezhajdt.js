@@ -1,4 +1,4 @@
-<script>
+
   ;(function () {
     let trafficTimer = null;    // 定时刷新定时器
     let trafficCache = null;    // 缓存数据，避免频繁请求
@@ -340,4 +340,4 @@
       sectionDetector.disconnect();
     });
   })();
-</script>
+
