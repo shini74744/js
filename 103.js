@@ -203,7 +203,7 @@ const trafficRenderer = (() => {
         // 1. 给最外层容器加 margin-top: -4px，整体往上移动（需求1）
         // 2. 进度条容器 margin-top 调整为 1px，进度条和上方统计更紧凑（需求2）
         newElement.innerHTML = `
-          <div style="margin-top: -4px;">
+          <div style="margin-top: -8px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div style="display:flex; align-items:baseline; gap:4px;">
                 <span class="used-traffic" style="font-size:10px; font-weight:500; color: ${progressColor};">${usedFormatted.value}</span>
@@ -216,7 +216,7 @@ const trafficRenderer = (() => {
                 ${contents[0]}
               </div>
             </div>
-            <div style="position:relative; height:6px; margin-top: 1px; border-radius:9999px; background-color:#e5e7eb;">
+            <div style="position:relative; height:6px; margin-top: -1px; border-radius:9999px; background-color:#e5e7eb;">
               <div class="progress-bar" style="
                 position:absolute;
                 top:0; left:0; bottom:0;
