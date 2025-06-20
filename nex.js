@@ -1,27 +1,31 @@
-const SCRIPT_VERSION = 'modular-v1.0';
+const SCRIPT_VERSION = 'v20250617';
+// == 样式注入模块 ==
+function injectCustomCSS() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .mt-4.w-full.mx-auto > div {
+      display: none;
+    }
+  `;
+  document.head.appendChild(style);
+}
+injectCustomCSS();
 
-// == 配置项 ==
-const TrafficScriptConfig = {
-  showTrafficStats: true,
-  interval: 60000,
-  toggleInterval: 5000,
-  duration: 500,
-  apiUrl: '/api/v1/service',
-  enableLog: false
-};
-
-// == 工具函数 ==
+// == 工具函数模块 ==
 const utils = (() => {
   function formatFileSize(bytes) {
     if (bytes === 0) return { value: '0', unit: 'B' };
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
     let size = bytes;
-    let i = 0;
-    while (size >= 1024 && i < units.length - 1) {
+    let unitIndex = 0;
+    while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
-      i++;
+      unitIndex++;
     }
-    return { value: size.toFixed(i === 0 ? 0 : 2), unit: units[i] };
+    return {
+      value: size.toFixed(unitIndex === 0 ? 0 : 2),
+      unit: units[unitIndex]
+    };
   }
 
   function calculatePercentage(used, total) {
@@ -31,13 +35,16 @@ const utils = (() => {
       used /= 1e10;
       total /= 1e10;
     }
-    return total === 0 ? '0.0' : (used / total * 100).toFixed(1);
+    return total === 0 ? '0.00' : ((used / total) * 100).toFixed(2);
   }
 
   function formatDate(dateString) {
     const date = new Date(dateString);
+    if (isNaN(date)) return '';
     return date.toLocaleDateString('zh-CN', {
-      year: 'numeric', month: '2-digit', day: '2-digit'
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
     });
   }
 
@@ -46,31 +53,30 @@ const utils = (() => {
     if (el) el.textContent = text;
   }
 
-  function getGradientColor(p) {
-    p = Math.min(Math.max(Number(p), 0), 100);
-    const lerp = (a, b, t) => Math.round(a + (b - a) * t);
-    let r, g, b;
+  // ✅ 渐变颜色：绿色（≤50%）→ 橙色（50~80%）→ 红色（>80%）
+  function getHslGradientColor(percentage) {
+    const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+    const p = clamp(Number(percentage), 0, 100);
+
+    let h, s = 85, l = 50;
     if (p <= 50) {
       const t = p / 50;
-      r = lerp(16, 255, t);
-      g = lerp(185, 165, t);
-      b = lerp(129, 0, t);
+      h = 120 - (90 * t); // green → orange
     } else {
       const t = (p - 50) / 50;
-      r = lerp(255, 239, t);
-      g = lerp(165, 68, t);
-      b = lerp(0, 68, t);
+      h = 30 - (30 * t); // orange → red
     }
-    return `rgb(${r}, ${g}, ${b})`;
+
+    return `hsl(${h.toFixed(0)}, ${s}%, ${l}%)`;
   }
 
-  function fadeOutIn(el, newHTML, duration = 500) {
-    el.style.transition = `opacity ${duration / 2}ms`;
-    el.style.opacity = '0';
+  function fadeOutIn(element, newContent, duration = 500) {
+    element.style.transition = `opacity ${duration / 2}ms`;
+    element.style.opacity = '0';
     setTimeout(() => {
-      el.innerHTML = newHTML;
-      el.style.transition = `opacity ${duration / 2}ms`;
-      el.style.opacity = '1';
+      element.innerHTML = newContent;
+      element.style.transition = `opacity ${duration / 2}ms`;
+      element.style.opacity = '1';
     }, duration / 2);
   }
 
@@ -79,16 +85,16 @@ const utils = (() => {
     calculatePercentage,
     formatDate,
     safeSetTextContent,
-    getGradientColor,
+    getHslGradientColor,
     fadeOutIn
   };
 })();
 
-// == 渲染模块 ==
+// == 流量统计渲染模块 ==
 const trafficRenderer = (() => {
   const toggleElements = [];
 
-  function render(trafficData, config) {
+  function renderTrafficStats(trafficData, config) {
     const serverMap = new Map();
 
     for (const cycleId in trafficData) {
@@ -103,170 +109,287 @@ const trafficRenderer = (() => {
         const next_update = cycle.next_update[serverId];
         if (serverName && transfer !== undefined && max && from && to) {
           serverMap.set(serverName, {
-            id: serverId, transfer, max, from, to, next_update
+            id: serverId,
+            transfer,
+            max,
+            name: cycle.name,
+            from,
+            to,
+            next_update
           });
         }
       }
     }
 
-    serverMap.forEach((server, serverName) => {
-      const target = Array.from(document.querySelectorAll('section.grid.items-center.gap-2'))
-        .find(el => el.querySelector('p')?.textContent.trim() === serverName);
-      if (!target) return;
+    serverMap.forEach((serverData, serverName) => {
+      const targetElement = Array.from(document.querySelectorAll('section.grid.items-center.gap-2'))
+        .find(section => {
+          const firstText = section.querySelector('p')?.textContent.trim();
+          return firstText === serverName.trim();
+        });
+      if (!targetElement) return;
 
-      const container = target.closest('div');
-      if (!container) return;
+      const usedFormatted = utils.formatFileSize(serverData.transfer);
+      const totalFormatted = utils.formatFileSize(serverData.max);
+      const percentage = utils.calculatePercentage(serverData.transfer, serverData.max);
+      const fromFormatted = utils.formatDate(serverData.from);
+      const toFormatted = utils.formatDate(serverData.to);
+      const nextUpdateFormatted = new Date(serverData.next_update).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
+      const uniqueClassName = 'traffic-stats-for-server-' + serverData.id;
+      const progressColor = utils.getHslGradientColor(percentage);
+      const containerDiv = targetElement.closest('div');
+      if (!containerDiv) return;
+      const log = (...args) => { if (config.enableLog) console.log('[renderTrafficStats]', ...args); };
 
-      const used = utils.formatFileSize(server.transfer);
-      const total = utils.formatFileSize(server.max);
-      const percent = utils.calculatePercentage(server.transfer, server.max);
-      const from = utils.formatDate(server.from);
-      const to = utils.formatDate(server.to);
-      const color = utils.getGradientColor(percent);
-      const next = new Date(server.next_update).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
-
-      const unique = `traffic-stats-${server.id}`;
-      const existing = container.querySelector(`.${unique}`);
+      const existing = Array.from(containerDiv.querySelectorAll('.new-inserted-element'))
+        .find(el => el.classList.contains(uniqueClassName));
 
       if (!config.showTrafficStats) {
-        if (existing) existing.remove();
+        if (existing) {
+          existing.remove();
+          log(`移除流量条目: ${serverName}`);
+        }
         return;
       }
 
       if (existing) {
-        utils.safeSetTextContent(existing, '.used-traffic', used.value);
-        utils.safeSetTextContent(existing, '.used-unit', used.unit);
-        utils.safeSetTextContent(existing, '.total-traffic', total.value);
-        utils.safeSetTextContent(existing, '.total-unit', total.unit);
-        utils.safeSetTextContent(existing, '.percentage-value', percent + '%');
+        utils.safeSetTextContent(existing, '.used-traffic', usedFormatted.value);
+        utils.safeSetTextContent(existing, '.used-unit', usedFormatted.unit);
+        utils.safeSetTextContent(existing, '.total-traffic', totalFormatted.value);
+        utils.safeSetTextContent(existing, '.total-unit', totalFormatted.unit);
+        utils.safeSetTextContent(existing, '.from-date', fromFormatted);
+        utils.safeSetTextContent(existing, '.to-date', toFormatted);
+        utils.safeSetTextContent(existing, '.percentage-value', percentage + '%');
+        utils.safeSetTextContent(existing, '.next-update', `next update: ${nextUpdateFormatted}`);
 
-        const bar = existing.querySelector('.progress-bar');
-        if (bar) {
-          bar.style.width = percent + '%';
-          bar.style.backgroundColor = color;
+        const progressBar = existing.querySelector('.progress-bar');
+        if (progressBar) {
+          progressBar.style.width = percentage + '%';
+          progressBar.style.backgroundColor = progressColor;
         }
+        log(`更新流量条目: ${serverName}`);
       } else {
-        const div = document.createElement('div');
-        div.className = `space-y-1 new-inserted-element ${unique}`;
-        div.innerHTML = `
+        let oldSection = null;
+        if (config.insertAfter) {
+          oldSection = containerDiv.querySelector('section.flex.items-center.w-full.justify-between.gap-1')
+            || containerDiv.querySelector('section.grid.items-center.gap-3');
+        } else {
+          oldSection = containerDiv.querySelector('section.grid.items-center.gap-3');
+        }
+        if (!oldSection) return;
+
+        const defaultTimeInfoHTML = `<span class="from-date">${fromFormatted}</span>
+                <span class="text-neutral-500 dark:text-neutral-400">-</span>
+                <span class="to-date">${toFormatted}</span>`;
+        const contents = [
+          defaultTimeInfoHTML,
+          `<span class="text-[10px] font-medium text-neutral-800 dark:text-neutral-200 percentage-value">${percentage}%</span>`,
+          `<span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-300">${nextUpdateFormatted}</span>`
+        ];
+
+        const newElement = document.createElement('div');
+        newElement.classList.add('space-y-1.5', 'new-inserted-element', uniqueClassName);
+        newElement.style.width = '100%';
+        newElement.innerHTML = `
           <div class="flex items-center justify-between">
             <div class="flex items-baseline gap-1">
-              <span class="text-[10px] font-medium used-traffic" style="color:${color}">${used.value}</span>
-              <span class="text-[10px] font-medium used-unit" style="color:${color}">${used.unit}</span>
-              <span class="text-[10px] text-neutral-400">/</span>
-              <span class="text-[10px] total-traffic" style="color:${color}">${total.value}</span>
-              <span class="text-[10px] total-unit" style="color:${color}">${total.unit}</span>
+              <span class="text-[10px] font-medium text-neutral-800 dark:text-neutral-200 used-traffic">${usedFormatted.value}</span>
+              <span class="text-[10px] font-medium text-neutral-800 dark:text-neutral-200 used-unit">${usedFormatted.unit}</span>
+              <span class="text-[10px] text-neutral-500 dark:text-neutral-400">/ </span>
+              <span class="text-[10px] text-neutral-500 dark:text-neutral-400 total-traffic">${totalFormatted.value}</span>
+              <span class="text-[10px] text-neutral-500 dark:text-neutral-400 total-unit">${totalFormatted.unit}</span>
             </div>
-            <div class="text-[10px] text-neutral-500 time-info">${from} - ${to}</div>
+            <div class="text-[10px] font-medium text-neutral-600 dark:text-neutral-300 time-info" style="opacity:1; transition: opacity 0.3s;">
+              ${defaultTimeInfoHTML}
+            </div>
           </div>
           <div class="relative h-1.5">
             <div class="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
-            <div class="absolute inset-0 progress-bar rounded-full transition-all duration-300" style="width: ${percent}%; background-color: ${color};"></div>
+            <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%; max-width: 100%; background-color: ${progressColor};"></div>
           </div>
         `;
-        target.after(div);
+        oldSection.after(newElement);
+        log(`插入新流量条目: ${serverName}`);
 
-        const timeEl = div.querySelector('.time-info');
-        if (timeEl) {
-          toggleElements.push({
-            el: timeEl,
-            contents: [
-              `${from} - ${to}`,
-              `<span class="percentage-value" style="color:${color}">${percent}%</span>`,
-              `<span class="text-neutral-400">${next}</span>`
-            ]
-          });
+        if (config.toggleInterval > 0) {
+          const timeInfoElement = newElement.querySelector('.time-info');
+          if (timeInfoElement) {
+            toggleElements.push({
+              el: timeInfoElement,
+              contents
+            });
+          }
         }
       }
     });
   }
 
-  function startToggle(interval, duration) {
-    let index = 0;
+  function startToggleCycle(toggleInterval, duration) {
+    if (toggleInterval <= 0) return;
+    let toggleIndex = 0;
     setInterval(() => {
-      index++;
+      toggleIndex++;
       toggleElements.forEach(({ el, contents }) => {
         if (!document.body.contains(el)) return;
-        const content = contents[index % contents.length];
-        utils.fadeOutIn(el, content, duration);
+        const index = toggleIndex % contents.length;
+        utils.fadeOutIn(el, contents[index], duration);
       });
-    }, interval);
+    }, toggleInterval);
   }
 
   return {
-    render,
-    startToggle
+    renderTrafficStats,
+    startToggleCycle
   };
 })();
 
-// == 数据模块 ==
-const dataFetcher = (() => {
-  let cache = null;
-  function fetch(config, callback) {
+// == 数据请求和缓存模块 ==
+const trafficDataManager = (() => {
+  let trafficCache = null;
+
+  function fetchTrafficData(apiUrl, config, callback) {
     const now = Date.now();
-    if (cache && (now - cache.timestamp < config.interval)) {
-      return callback(cache.data);
+    if (trafficCache && (now - trafficCache.timestamp < config.interval)) {
+      if (config.enableLog) console.log('[fetchTrafficData] 使用缓存数据');
+      callback(trafficCache.data);
+      return;
     }
-    fetch(config.apiUrl)
+
+    if (config.enableLog) console.log('[fetchTrafficData] 请求新数据...');
+    fetch(apiUrl)
       .then(res => res.json())
       .then(data => {
-        if (!data.success) return;
-        cache = { timestamp: now, data: data.data.cycle_transfer_stats };
-        callback(cache.data);
+        if (!data.success) {
+          if (config.enableLog) console.warn('[fetchTrafficData] 请求成功但数据异常');
+          return;
+        }
+        if (config.enableLog) console.log('[fetchTrafficData] 成功获取新数据');
+        const trafficData = data.data.cycle_transfer_stats;
+        trafficCache = {
+          timestamp: now,
+          data: trafficData
+        };
+        callback(trafficData);
       })
-      .catch(e => console.error('[TrafficScript] 请求失败:', e));
+      .catch(err => {
+        if (config.enableLog) console.error('[fetchTrafficData] 请求失败:', err);
+      });
   }
-  return { fetch };
+
+  return {
+    fetchTrafficData
+  };
 })();
 
-// == DOM 监听模块 ==
+// == DOM变化监听模块 ==
 const domObserver = (() => {
-  let section = null, observer = null;
-  const selector = 'section.server-card-list, section.server-inline-list';
+  const TARGET_SELECTOR = 'section.server-card-list, section.server-inline-list';
+  let currentSection = null;
+  let childObserver = null;
 
-  function start(onChange) {
-    const detect = new MutationObserver(() => {
-      const el = document.querySelector(selector);
-      if (el && el !== section) {
-        if (observer) observer.disconnect();
-        section = el;
-        observer = new MutationObserver(muts => {
-          for (const m of muts) {
-            if (m.type === 'childList') {
-              onChange();
-              break;
-            }
-          }
-        });
-        observer.observe(section, { childList: true });
-        onChange();
+  function onDomChildListChange(onChangeCallback) {
+    onChangeCallback();
+  }
+
+  function observeSection(section, onChangeCallback) {
+    if (childObserver) {
+      childObserver.disconnect();
+    }
+    currentSection = section;
+    childObserver = new MutationObserver(mutations => {
+      for (const m of mutations) {
+        if (m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length)) {
+          onDomChildListChange(onChangeCallback);
+          break;
+        }
+      }
+    });
+    childObserver.observe(currentSection, { childList: true, subtree: false });
+    onChangeCallback();
+  }
+
+  function startSectionDetector(onChangeCallback) {
+    const sectionDetector = new MutationObserver(() => {
+      const section = document.querySelector(TARGET_SELECTOR);
+      if (section && section !== currentSection) {
+        observeSection(section, onChangeCallback);
       }
     });
     const root = document.querySelector('main') || document.body;
-    detect.observe(root, { childList: true, subtree: true });
+    sectionDetector.observe(root, { childList: true, subtree: true });
+    return sectionDetector;
   }
 
-  return { start };
+  function disconnectAll(sectionDetector) {
+    if (childObserver) childObserver.disconnect();
+    if (sectionDetector) sectionDetector.disconnect();
+  }
+
+  return {
+    startSectionDetector,
+    disconnectAll
+  };
 })();
 
 // == 主程序入口 ==
 (function main() {
-  console.log(`[TrafficScript] Loaded ${SCRIPT_VERSION}`);
-  let timer = null;
+  const defaultConfig = {
+    showTrafficStats: true,
+    insertAfter: true,
+    interval: 60000,
+    toggleInterval: 5000,
+    duration: 500,
+    apiUrl: '/api/v1/service',
+    enableLog: false
+  };
+  let config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
+  if (config.enableLog) {
+    console.log(`[TrafficScript] 版本: ${SCRIPT_VERSION}`);
+    console.log('[TrafficScript] 最终配置如下:', config);
+  }
 
-  function refresh() {
-    dataFetcher.fetch(TrafficScriptConfig, data => {
-      trafficRenderer.render(data, TrafficScriptConfig);
+  function updateTrafficStats() {
+    trafficDataManager.fetchTrafficData(config.apiUrl, config, trafficData => {
+      trafficRenderer.renderTrafficStats(trafficData, config);
     });
-    if (!timer) {
-      timer = setInterval(refresh, TrafficScriptConfig.interval);
+  }
+
+  function onDomChange() {
+    if (config.enableLog) console.log('[main] DOM变化，刷新流量数据');
+    updateTrafficStats();
+    if (!trafficTimer) startPeriodicRefresh();
+  }
+
+  let trafficTimer = null;
+
+  function startPeriodicRefresh() {
+    if (!trafficTimer) {
+      if (config.enableLog) console.log('[main] 启动周期刷新任务');
+      trafficTimer = setInterval(() => {
+        updateTrafficStats();
+      }, config.interval);
     }
   }
 
-  domObserver.start(refresh);
-  trafficRenderer.startToggle(TrafficScriptConfig.toggleInterval, TrafficScriptConfig.duration);
+  trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
+  const sectionDetector = domObserver.startSectionDetector(onDomChange);
+  onDomChange();
+
+  setTimeout(() => {
+    const newConfig = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
+    if (JSON.stringify(newConfig) !== JSON.stringify(config)) {
+      if (config.enableLog) console.log('[main] 100ms后检测到新配置，更新配置并重启任务');
+      config = newConfig;
+      startPeriodicRefresh();
+      trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
+      updateTrafficStats();
+    } else {
+      if (config.enableLog) console.log('[main] 100ms后无新配置，保持原配置');
+    }
+  }, 100);
 
   window.addEventListener('beforeunload', () => {
-    if (timer) clearInterval(timer);
+    domObserver.disconnectAll(sectionDetector);
+    if (trafficTimer) clearInterval(trafficTimer);
   });
 })();
