@@ -36,7 +36,7 @@ const utils = (() => {
   function getHslGradientColor(percentage) {
   const p = Math.min(Math.max(Number(percentage), 0), 100);
   const hue = 120 - (120 * (p / 100)); // 0%绿色，100%红色，平滑过渡
-  return `hsl(${hue.toFixed(0)}, 85%, 50%)`;
+  return `hsl(${hue.toFixed(0)}, 65%, 40%)`;
 }
 
   function fadeOutIn(el, newContent, duration = 500) {
