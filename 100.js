@@ -211,7 +211,7 @@ const trafficRenderer = (() => {
               ${contents[0]}
             </div>
           </div>
-          <div style="position:relative; height:6px; margin-top:4px; border-radius:9999px; background-color:#e5e7eb;">
+          <div style="position:relative; height:6px; margin-top:0px; border-radius:9999px; background-color:#e5e7eb;">
             <div class="progress-bar" style="
               position:absolute;
               top:0; left:0; bottom:0;
