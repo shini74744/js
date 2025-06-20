@@ -153,82 +153,65 @@ const trafficRenderer = (() => {
       }
 
       if (existing) {
-        utils.safeSetTextContent(existing, '.used-traffic', usedFormatted.value);
-        utils.safeSetTextContent(existing, '.used-unit', usedFormatted.unit);
-        utils.safeSetTextContent(existing, '.total-traffic', totalFormatted.value);
-        utils.safeSetTextContent(existing, '.total-unit', totalFormatted.unit);
-        utils.safeSetTextContent(existing, '.from-date', fromFormatted);
-        utils.safeSetTextContent(existing, '.to-date', toFormatted);
-        utils.safeSetTextContent(existing, '.percentage-value', percentage + '%');
-        utils.safeSetTextContent(existing, '.next-update', `next update: ${nextUpdateFormatted}`);
+  utils.safeSetTextContent(existing, '.used-traffic', usedFormatted.value);
+  utils.safeSetTextContent(existing, '.used-unit', usedFormatted.unit);
+  utils.safeSetTextContent(existing, '.total-traffic', totalFormatted.value);
+  utils.safeSetTextContent(existing, '.total-unit', totalFormatted.unit);
+  utils.safeSetTextContent(existing, '.from-date', fromFormatted);
+  utils.safeSetTextContent(existing, '.to-date', toFormatted);
+  utils.safeSetTextContent(existing, '.percentage-value', percentage + '%');
+  utils.safeSetTextContent(existing, '.next-update', `next update: ${nextUpdateFormatted}`);
 
-        const progressBar = existing.querySelector('.progress-bar');
-        if (progressBar) {
-          progressBar.style.width = percentage + '%';
-          progressBar.style.backgroundColor = progressColor;
-        }
-        // 设置已用流量数字颜色与进度条一致
-        const usedTrafficEl = existing.querySelector('.used-traffic');
-        const usedUnitEl = existing.querySelector('.used-unit');
-        if (usedTrafficEl) usedTrafficEl.style.color = progressColor;
-        if (usedUnitEl) usedUnitEl.style.color = progressColor;
-
-        log(`更新流量条目: ${serverName}`);
-      } else {
-        let oldSection = null;
-        if (config.insertAfter) {
-          oldSection = containerDiv.querySelector('section.flex.items-center.w-full.justify-between.gap-1')
-            || containerDiv.querySelector('section.grid.items-center.gap-3');
-        } else {
-          oldSection = containerDiv.querySelector('section.grid.items-center.gap-3');
-        }
-        if (!oldSection) return;
-
-        const defaultTimeInfoHTML = `<span class="from-date">${fromFormatted}</span>
-                <span class="text-neutral-500 dark:text-neutral-400">-</span>
-                <span class="to-date">${toFormatted}</span>`;
-        const contents = [
-          defaultTimeInfoHTML,
-          `<span class="text-[10px] font-medium text-neutral-800 dark:text-neutral-200 percentage-value">${percentage}%</span>`,
-          `<span class="text-[10px] font-medium text-neutral-600 dark:text-neutral-300">${nextUpdateFormatted}</span>`
-        ];
-
-        const newElement = document.createElement('div');
-        newElement.classList.add('space-y-1.5', 'new-inserted-element', uniqueClassName);
-        newElement.style.width = '100%';
-        newElement.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div class="flex items-baseline gap-1">
-              <span class="text-[10px] font-medium used-traffic" style="color: ${progressColor};">${usedFormatted.value}</span>
-              <span class="text-[10px] font-medium used-unit" style="color: ${progressColor};">${usedFormatted.unit}</span>
-              <span class="text-[10px] text-neutral-500 dark:text-neutral-400">/ </span>
-              <span class="text-[10px] text-neutral-500 dark:text-neutral-400 total-traffic">${totalFormatted.value}</span>
-              <span class="text-[10px] text-neutral-500 dark:text-neutral-400 total-unit">${totalFormatted.unit}</span>
-            </div>
-            <div class="text-[10px] font-medium text-neutral-600 dark:text-neutral-300 time-info" style="opacity:1; transition: opacity 0.3s;">
-              ${defaultTimeInfoHTML}
-            </div>
-          </div>
-          <div class="relative h-1.5">
-            <div class="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
-            <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%; max-width: 100%; background-color: ${progressColor};"></div>
-          </div>
-        `;
-        oldSection.after(newElement);
-        log(`插入新流量条目: ${serverName}`);
-
-        if (config.toggleInterval > 0) {
-          const timeInfoElement = newElement.querySelector('.time-info');
-          if (timeInfoElement) {
-            toggleElements.push({
-              el: timeInfoElement,
-              contents
-            });
-          }
-        }
-      }
-    });
+  const progressBar = existing.querySelector('.progress-bar');
+  if (progressBar) {
+    progressBar.style.width = percentage + '%';
+    progressBar.style.backgroundColor = progressColor;
   }
+
+  const usedTrafficEl = existing.querySelector('.used-traffic');
+  const usedUnitEl = existing.querySelector('.used-unit');
+  const percentageEl = existing.querySelector('.percentage-value');
+  if (usedTrafficEl) usedTrafficEl.style.color = progressColor;
+  if (usedUnitEl) usedUnitEl.style.color = progressColor;
+  if (percentageEl) percentageEl.style.color = progressColor;
+
+  log(`更新流量条目: ${serverName}`);
+} else {
+  // 新插入元素时
+  newElement.innerHTML = `
+    <div class="flex items-center justify-between">
+      <div class="flex items-baseline gap-1">
+        <span class="text-[10px] font-medium used-traffic" style="color: ${progressColor};">${usedFormatted.value}</span>
+        <span class="text-[10px] font-medium used-unit" style="color: ${progressColor};">${usedFormatted.unit}</span>
+        <span class="text-[10px] text-neutral-500 dark:text-neutral-400">/ </span>
+        <span class="text-[10px] text-neutral-500 dark:text-neutral-400 total-traffic">${totalFormatted.value}</span>
+        <span class="text-[10px] text-neutral-500 dark:text-neutral-400 total-unit">${totalFormatted.unit}</span>
+      </div>
+      <div class="text-[10px] font-medium text-neutral-600 dark:text-neutral-300 time-info" style="opacity:1; transition: opacity 0.3s;">
+        ${defaultTimeInfoHTML}
+      </div>
+    </div>
+    <div class="flex justify-end mt-0.5">
+      <span class="text-[10px] font-medium percentage-value" style="color: ${progressColor};">${percentage}%</span>
+    </div>
+    <div class="relative h-1.5 mt-1">
+      <div class="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
+      <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%; max-width: 100%; background-color: ${progressColor};"></div>
+    </div>
+  `;
+  oldSection.after(newElement);
+  log(`插入新流量条目: ${serverName}`);
+
+  if (config.toggleInterval > 0) {
+    const timeInfoElement = newElement.querySelector('.time-info');
+    if (timeInfoElement) {
+      toggleElements.push({
+        el: timeInfoElement,
+        contents
+      });
+    }
+  }
+}
 
   function startToggleCycle(toggleInterval, duration) {
     if (toggleInterval <= 0) return;
