@@ -118,26 +118,35 @@ const trafficRenderer = (() => {
       wrapper.style.width = '100%';
 
       wrapper.innerHTML = `
-        <div style="margin-top:-6px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:baseline; gap:4px;">
-              <span class="used-traffic" style="font-size:10px; font-weight:500; color:${progressColor};">${used.value}</span>
-              <span class="used-unit" style="font-size:10px; font-weight:500; color:${progressColor};">${used.unit}</span>
-              <span style="font-size:10px; color:#fff;">/</span>
-              <span class="total-traffic" style="font-size:10px; color:#fff;">${total.value}</span>
-              <span class="total-unit" style="font-size:10px; color:#fff;">${total.unit}</span>
-            </div>
-            <div class="time-info" style="font-size:10px; color:#fff; opacity:1; transition:opacity 0.3s;">
-              ${rotateContents[0]}
-            </div>
-          </div>
-          <div style="position:relative; height:6px; margin-top:1px; border-radius:9999px; background-color: rgba(100, 116, 139, 0.15);">
-            <div class="progress-bar" style="position:absolute; top:0; left:0; bottom:0;
-              border-radius:9999px; width:${percent}%; max-width:100%;
-              background-color:${progressColor}; transition:width 0.3s ease;"></div>
-          </div>
-        </div>
-      `;
+  <div style="margin-top:-6px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; align-items:baseline; gap:4px;">
+        <span class="used-traffic" style="font-size:10px; font-weight:500; color:${progressColor};">${used.value}</span>
+        <span class="used-unit" style="font-size:10px; font-weight:500; color:${progressColor};">${used.unit}</span>
+        <span style="font-size:10px; color:#fff;">/</span>
+        <span class="total-traffic" style="font-size:10px; color:#fff;">${total.value}</span>
+        <span class="total-unit" style="font-size:10px; color:#fff;">${total.unit}</span>
+      </div>
+      <div class="time-info" style="font-size:10px; color:#fff; opacity:1; transition:opacity 0.3s;">
+        ${rotateContents[0]}
+      </div>
+    </div>
+    <div style="position:relative; height:6px; margin-top:1px; border-radius:9999px; background-color: rgba(100, 116, 139, 0.15);">
+      <div class="progress-bar" style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: ${percent}%;
+        max-width: 100%;
+        background-color: ${progressColor};
+        border-radius: 9999px;
+        transition: width 0.5s ease-in-out, background-color 0.3s ease;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+      "></div>
+    </div>
+  </div>
+`;
 
       refSection.after(wrapper);
 
