@@ -53,7 +53,7 @@ const utils = (() => {
     if (el) el.textContent = text;
   }
 
-  // ✅ 渐变颜色：绿色（≤50%）→ 橙色（50~80%）→ 红色（>80%）
+  // 渐变颜色：绿色（≤50%）→ 橙色（50~80%）→ 红色（>80%）
   function getHslGradientColor(percentage) {
     const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
     const p = clamp(Number(percentage), 0, 100);
@@ -177,7 +177,7 @@ const trafficRenderer = (() => {
 
         log(`更新流量条目: ${serverName}`);
       } else {
-        // 轮换内容，三个状态：时间范围、固定文本“本月流量统计”、百分比数字
+        // 轮换内容，三个状态：时间范围、本月流量统计文字、百分比数字
         const contents = [
           `<span class="from-date">${fromFormatted}</span>
            <span class="text-neutral-500 dark:text-neutral-400">-</span>
@@ -198,8 +198,12 @@ const trafficRenderer = (() => {
         const newElement = document.createElement('div');
         newElement.classList.add('space-y-1.5', 'new-inserted-element', uniqueClassName);
         newElement.style.width = '100%';
+
+        // -- 修改点 --
+        // 1. 给最外层容器加 margin-top: -4px，整体往上移动（需求1）
+        // 2. 进度条容器 margin-top 调整为 1px，进度条和上方统计更紧凑（需求2）
         newElement.innerHTML = `
-          <div style="margin-top:-4px;">
+          <div style="margin-top: -4px;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
               <div style="display:flex; align-items:baseline; gap:4px;">
                 <span class="used-traffic" style="font-size:10px; font-weight:500; color: ${progressColor};">${usedFormatted.value}</span>
@@ -212,7 +216,7 @@ const trafficRenderer = (() => {
                 ${contents[0]}
               </div>
             </div>
-            <div style="position:relative; height:6px; margin-top:4px; border-radius:9999px; background-color:#e5e7eb;">
+            <div style="position:relative; height:6px; margin-top: 1px; border-radius:9999px; background-color:#e5e7eb;">
               <div class="progress-bar" style="
                 position:absolute;
                 top:0; left:0; bottom:0;
