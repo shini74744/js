@@ -2,44 +2,47 @@
   const REFRESH_INTERVAL = 500;
   const MAX_SPEED = 30 * 1024 * 1024;
 
-  // 一次性插入所有动画样式
   const style = document.createElement('style');
   style.textContent = `
+    /* 主体样式，保持原生inline-block排列，移除多余padding margin */
     p[class*="text-[11px]"] {
-      display: inline-flex !important;
-      align-items: center !important;
-      margin-right: 6px !important;
+      display: inline-block !important;
+      vertical-align: middle !important;
       line-height: 1 !important;
       transition: color 0.5s ease;
       position: relative;
-      padding: 0 4px;
+      padding: 0 !important;        /* 去掉内边距 */
+      margin: 0 !important;         /* 去掉外边距 */
       border-radius: 4px;
     }
+    /* 图标和文字紧凑排列 */
     p[class*="text-[11px]"] svg {
       vertical-align: middle !important;
-      margin-right: 2px !important;
+      margin-right: 2px !important; /* 你可以调节这个数字试微调图标和文字距离 */
       flex-shrink: 0 !important;
     }
 
-    /* 颜色渐变闪烁 */
+    /* 可选的微调类，你可以给元素加上这个类进行位置微调 */
+    .position-adjust {
+      position: relative;
+      left: var(--pos-left, 0);
+      top: var(--pos-top, 0);
+      transform: translate(var(--pos-translate-x, 0), var(--pos-translate-y, 0));
+    }
+
+    /* 颜色渐变闪烁动画 */
     @keyframes color-glow {
       0%, 100% { color: rgba(255, 0, 0, 0.7); text-shadow: 0 0 5px rgba(255, 0, 0, 0.7); }
       50% { color: rgba(255, 50, 50, 1); text-shadow: 0 0 12px rgba(255, 50, 50, 1); }
     }
-
-    /* 边框发光 */
     @keyframes border-glow {
       0%, 100% { box-shadow: 0 0 5px 0 rgba(255, 0, 0, 0.6); }
       50% { box-shadow: 0 0 15px 3px rgba(255, 0, 0, 1); }
     }
-
-    /* 背景脉冲 */
     @keyframes background-pulse {
       0%, 100% { background-color: rgba(255, 0, 0, 0.1); }
       50% { background-color: rgba(255, 0, 0, 0.25); }
     }
-
-    /* 文字阴影脉冲 */
     @keyframes text-shadow-pulse {
       0%, 100% { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
       50% { text-shadow: 0 0 15px rgba(255, 0, 0, 1); }
