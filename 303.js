@@ -4,33 +4,27 @@
 
   const style = document.createElement('style');
   style.textContent = `
-    /* 主体样式，保持原生inline-block排列，移除多余padding margin */
+    /* 让p元素用inline-flex水平排布，图标和文字垂直居中 */
     p[class*="text-[11px]"] {
-      display: inline-block !important;
-      vertical-align: middle !important;
+      display: inline-flex !important;
+      align-items: center !important;
       line-height: 1 !important;
       transition: color 0.5s ease;
       position: relative;
-      padding: 0 !important;        /* 去掉内边距 */
-      margin: 0 !important;         /* 去掉外边距 */
+      padding: 0 !important;
+      margin: 0 !important;
       border-radius: 4px;
     }
-    /* 图标和文字紧凑排列 */
+    /* svg图标和文字间距，图标固定大小且不缩放 */
     p[class*="text-[11px]"] svg {
-      vertical-align: middle !important;
-      margin-right: 2px !important; /* 你可以调节这个数字试微调图标和文字距离 */
       flex-shrink: 0 !important;
+      width: 1em;
+      height: 1em;
+      margin-right: 4px !important;
+      vertical-align: middle !important;
     }
 
-    /* 可选的微调类，你可以给元素加上这个类进行位置微调 */
-    .position-adjust {
-      position: relative;
-      left: var(--pos-left, 0);
-      top: var(--pos-top, 0);
-      transform: translate(var(--pos-translate-x, 0), var(--pos-translate-y, 0));
-    }
-
-    /* 颜色渐变闪烁动画 */
+    /* 动画关键帧（同之前） */
     @keyframes color-glow {
       0%, 100% { color: rgba(255, 0, 0, 0.7); text-shadow: 0 0 5px rgba(255, 0, 0, 0.7); }
       50% { color: rgba(255, 50, 50, 1); text-shadow: 0 0 12px rgba(255, 50, 50, 1); }
