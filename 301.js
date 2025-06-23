@@ -27,13 +27,6 @@
       50% { color: rgba(255, 50, 50, 1); text-shadow: 0 0 12px rgba(255, 50, 50, 1); }
     }
 
-    /* 抖动动画 */
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-2px); }
-      75% { transform: translateX(2px); }
-    }
-
     /* 边框发光 */
     @keyframes border-glow {
       0%, 100% { box-shadow: 0 0 5px 0 rgba(255, 0, 0, 0.6); }
@@ -60,12 +53,12 @@
     }
     .speed-boost-2 {
       font-weight: bold;
-      animation: color-glow 1.5s infinite ease-in-out, shake 0.3s infinite ease-in-out;
+      animation: color-glow 1.5s infinite ease-in-out;
       text-shadow: 0 0 6px rgba(255, 0, 0, 0.8);
     }
     .speed-boost-3 {
       font-weight: bold;
-      animation: color-glow 1.5s infinite ease-in-out, shake 0.3s infinite ease-in-out, background-pulse 1.5s infinite ease-in-out, text-shadow-pulse 1.2s infinite ease-in-out, border-glow 1.2s infinite ease-in-out;
+      animation: color-glow 1.5s infinite ease-in-out, background-pulse 1.5s infinite ease-in-out, text-shadow-pulse 1.2s infinite ease-in-out, border-glow 1.2s infinite ease-in-out;
       text-shadow: 0 0 10px rgba(255, 0, 0, 1);
       background-color: rgba(255, 0, 0, 0.08);
       border-radius: 4px;
@@ -83,13 +76,13 @@
     }
     .speed-boost-2-dl {
       font-weight: bold;
-      animation: color-glow 1.5s infinite ease-in-out, shake 0.3s infinite ease-in-out;
+      animation: color-glow 1.5s infinite ease-in-out;
       text-shadow: 0 0 6px rgba(0, 0, 255, 0.8);
       color: rgba(0, 0, 255, 1) !important;
     }
     .speed-boost-3-dl {
       font-weight: bold;
-      animation: color-glow 1.5s infinite ease-in-out, shake 0.3s infinite ease-in-out, background-pulse 1.5s infinite ease-in-out, text-shadow-pulse 1.2s infinite ease-in-out, border-glow 1.2s infinite ease-in-out;
+      animation: color-glow 1.5s infinite ease-in-out, background-pulse 1.5s infinite ease-in-out, text-shadow-pulse 1.2s infinite ease-in-out, border-glow 1.2s infinite ease-in-out;
       text-shadow: 0 0 10px rgba(0, 0, 255, 1);
       background-color: rgba(0, 0, 255, 0.08);
       border-radius: 4px;
