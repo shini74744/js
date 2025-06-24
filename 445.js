@@ -112,26 +112,17 @@
     return num * (units[unit] || 1);
   }
 
-  /**
-   * 均匀的颜色渐变函数，使用log10映射，避免低速过快饱和
-   * @param {number} speed 字节/秒
-   * @param {number} maxSpeed 最大速度，字节/秒
-   * @param {string} type "upload" or "download"
-   * @returns {string} rgb颜色字符串
-   */
+  // 颜色均匀映射函数，改为平方根映射
   function speedToColor(speed, maxSpeed, type) {
-    const logSpeed = Math.log10(speed + 1);
-    const logMax = Math.log10(maxSpeed + 1);
-    const ratio = Math.min(logSpeed / logMax, 1);
+    if (speed <= 0) return type === 'upload' ? 'rgb(255,200,200)' : 'rgb(200,200,255)';
+    const ratio = Math.min(Math.sqrt(speed / maxSpeed), 1);
 
     if (type === 'upload') {
-      // 红色渐变，从淡红(255, 200, 200)到纯红(255, 0, 0)
       const r = 255;
       const g = Math.round(200 * (1 - ratio));
       const b = Math.round(200 * (1 - ratio));
       return `rgb(${r},${g},${b})`;
     } else {
-      // 蓝色渐变，从淡蓝(200, 200, 255)到纯蓝(0, 0, 255)
       const r = Math.round(200 * (1 - ratio));
       const g = Math.round(200 * (1 - ratio));
       const b = 255;
