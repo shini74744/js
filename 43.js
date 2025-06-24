@@ -5,14 +5,14 @@
   const style = document.createElement('style');
   style.textContent = `
     p[class*="text-[11px]"] {
-      display: inline-flex !important;
+      display: inline-block !important;
       align-items: center !important;
+      margin-right: 8px !important;
       line-height: 1 !important;
       transition: color 0.5s ease !important;
-      position: relative;
-      padding: 0 !important;
-      margin: 0 !important;
-      border-radius: 4px;
+      transform-origin: center center !important;
+      position: relative !important;
+      z-index: 1;
     }
 
     p[class*="text-[11px]"] svg {
@@ -43,14 +43,6 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.75; }
     }
-    @keyframes pulse-scale-small {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-    @keyframes pulse-scale-large {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-    }
 
     .speed-level-1,
     .speed-level-1-dl {
@@ -80,7 +72,7 @@
     .speed-level-4 {
       animation: border-glow 1.5s infinite ease-in-out,
                  background-pulse 1.8s infinite ease-in-out,
-                 pulse-scale-small 2s infinite ease-in-out !important;
+                 subtle-glow 2s infinite ease-in-out !important;
       background-color: rgba(255, 0, 0, 0.2) !important;
       border-radius: 4px;
     }
@@ -88,7 +80,7 @@
     .speed-level-4-dl {
       animation: border-glow 1.5s infinite ease-in-out,
                  background-pulse 1.8s infinite ease-in-out,
-                 pulse-scale-small 2s infinite ease-in-out !important;
+                 subtle-glow 2s infinite ease-in-out !important;
       background-color: rgba(0, 0, 255, 0.2) !important;
       border-radius: 4px;
     }
@@ -97,24 +89,30 @@
       animation: color-glow 1.5s infinite ease-in-out,
                  background-pulse 1.5s infinite ease-in-out,
                  text-shadow-pulse 1.2s infinite ease-in-out,
-                 border-glow 1.2s infinite ease-in-out,
-                 pulse-scale-large 1.8s infinite ease-in-out !important;
+                 border-glow 1.2s infinite ease-in-out !important;
       text-shadow: 0 0 18px rgba(255, 0, 0, 1) !important;
       background-color: rgba(255, 0, 0, 0.25) !important;
       border: 1px solid rgba(255, 0, 0, 0.6) !important;
       border-radius: 4px;
+      transform: scale(1.15) !important;
+      transform-origin: center center !important;
+      z-index: 10 !important;
+      position: relative !important;
     }
 
     .speed-level-5-dl {
       animation: color-glow 1.5s infinite ease-in-out,
                  background-pulse 1.5s infinite ease-in-out,
                  text-shadow-pulse 1.2s infinite ease-in-out,
-                 border-glow 1.2s infinite ease-in-out,
-                 pulse-scale-large 1.8s infinite ease-in-out !important;
+                 border-glow 1.2s infinite ease-in-out !important;
       text-shadow: 0 0 18px rgba(0, 0, 255, 1) !important;
       background-color: rgba(0, 0, 255, 0.25) !important;
       border: 1px solid rgba(0, 0, 255, 0.6) !important;
       border-radius: 4px;
+      transform: scale(1.15) !important;
+      transform-origin: center center !important;
+      z-index: 10 !important;
+      position: relative !important;
       color: rgba(0, 0, 255, 1) !important;
     }
   `;
