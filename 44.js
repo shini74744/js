@@ -5,15 +5,16 @@
   const style = document.createElement('style');
   style.textContent = `
     p[class*="text-[11px]"] {
-      display: inline-block !important;
-      align-items: center !important;
-      margin-right: 8px !important;
-      line-height: 1 !important;
-      transition: color 0.5s ease !important;
-      transform-origin: center center !important;
-      position: relative !important;
-      z-index: 1;
-    }
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-right: 8px !important;
+  line-height: 1 !important;
+  transition: color 0.5s ease !important;
+  transform-origin: center center !important;
+  position: relative !important;
+  z-index: 1;
+}
+
 
     p[class*="text-[11px]"] svg {
       flex-shrink: 0 !important;
