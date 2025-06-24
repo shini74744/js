@@ -14,7 +14,6 @@
       margin: 0 !important;
       border-radius: 4px;
     }
-
     p[class*="text-[11px]"] svg {
       flex-shrink: 0 !important;
       width: 1em;
@@ -22,69 +21,57 @@
       margin-right: 4px !important;
       vertical-align: middle !important;
     }
-
     @keyframes color-glow {
       0%, 100% { text-shadow: 0 0 5px rgba(255, 0, 0, 0.7); }
       50% { text-shadow: 0 0 12px rgba(255, 50, 50, 1); }
     }
-
     @keyframes border-glow {
       0%, 100% { box-shadow: 0 0 5px 0 rgba(255, 0, 0, 0.6); }
       50% { box-shadow: 0 0 15px 3px rgba(255, 0, 0, 1); }
     }
-
     @keyframes background-pulse {
       0%, 100% { background-color: rgba(255, 0, 0, 0.1); }
       50% { background-color: rgba(255, 0, 0, 0.25); }
     }
-
     @keyframes text-shadow-pulse {
       0%, 100% { text-shadow: 0 0 5px rgba(255, 0, 0, 0.6); }
       50% { text-shadow: 0 0 15px rgba(255, 0, 0, 1); }
     }
-
     @keyframes subtle-glow {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.75; }
     }
-
     .speed-level-1,
     .speed-level-1-dl {
       animation: none !important;
       text-shadow: none !important;
     }
-
     .speed-level-2 {
       animation: subtle-glow 2s infinite ease-in-out !important;
       text-shadow: 0 0 6px rgba(255, 50, 50, 0.6) !important;
       font-weight: bold !important;
       color: rgb(255, 100, 100) !important;
     }
-
     .speed-level-2-dl {
       animation: subtle-glow 2s infinite ease-in-out !important;
       text-shadow: 0 0 6px rgba(50, 50, 255, 0.6) !important;
       font-weight: bold !important;
       color: rgb(100, 100, 255) !important;
     }
-
     .speed-level-3,
     .speed-level-3-dl {
       animation: border-glow 1.5s infinite ease-in-out !important;
     }
-
     .speed-level-4 {
       animation: border-glow 1.5s infinite ease-in-out,
                  background-pulse 1.8s infinite ease-in-out !important;
       background-color: rgba(255, 0, 0, 0.08) !important;
     }
-
     .speed-level-4-dl {
       animation: border-glow 1.5s infinite ease-in-out,
                  background-pulse 1.8s infinite ease-in-out !important;
       background-color: rgba(0, 0, 255, 0.08) !important;
     }
-
     .speed-level-5 {
       animation: color-glow 1.5s infinite ease-in-out,
                  background-pulse 1.5s infinite ease-in-out,
@@ -94,7 +81,6 @@
       background-color: rgba(255, 0, 0, 0.08) !important;
       border: 1px solid transparent !important;
     }
-
     .speed-level-5-dl {
       animation: color-glow 1.5s infinite ease-in-out,
                  background-pulse 1.5s infinite ease-in-out,
@@ -126,19 +112,28 @@
     return num * (units[unit] || 1);
   }
 
+  /**
+   * 均匀的颜色渐变函数，使用log10映射，避免低速过快饱和
+   * @param {number} speed 字节/秒
+   * @param {number} maxSpeed 最大速度，字节/秒
+   * @param {string} type "upload" or "download"
+   * @returns {string} rgb颜色字符串
+   */
   function speedToColor(speed, maxSpeed, type) {
-    const compressedSpeed = Math.log2(Math.log2(speed + 2));
-    const compressedMax = Math.log2(Math.log2(maxSpeed + 2));
-    const ratio = Math.min(compressedSpeed / compressedMax, 1);
+    const logSpeed = Math.log10(speed + 1);
+    const logMax = Math.log10(maxSpeed + 1);
+    const ratio = Math.min(logSpeed / logMax, 1);
 
     if (type === 'upload') {
+      // 红色渐变，从淡红(255, 200, 200)到纯红(255, 0, 0)
       const r = 255;
-      const g = Math.round(255 * (1 - ratio));
-      const b = Math.round(255 * (1 - ratio));
+      const g = Math.round(200 * (1 - ratio));
+      const b = Math.round(200 * (1 - ratio));
       return `rgb(${r},${g},${b})`;
     } else {
-      const r = Math.round(255 * (1 - ratio));
-      const g = Math.round(255 * (1 - ratio));
+      // 蓝色渐变，从淡蓝(200, 200, 255)到纯蓝(0, 0, 255)
+      const r = Math.round(200 * (1 - ratio));
+      const g = Math.round(200 * (1 - ratio));
       const b = 255;
       return `rgb(${r},${g},${b})`;
     }
