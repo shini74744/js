@@ -54,9 +54,18 @@
       text-shadow: none !important;
     }
 
-    .speed-level-2,
+    .speed-level-2 {
+      animation: subtle-glow 2s infinite ease-in-out !important;
+      text-shadow: 0 0 6px rgba(255, 50, 50, 0.6) !important;
+      font-weight: bold !important;
+      color: rgb(255, 100, 100) !important;
+    }
+
     .speed-level-2-dl {
       animation: subtle-glow 2s infinite ease-in-out !important;
+      text-shadow: 0 0 6px rgba(50, 50, 255, 0.6) !important;
+      font-weight: bold !important;
+      color: rgb(100, 100, 255) !important;
     }
 
     .speed-level-3,
