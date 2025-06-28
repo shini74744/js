@@ -15,7 +15,7 @@
             z: 10, // z-index 可自定义
             o: getAttr(currentScript, "opacity", 0.5),
             c: getAttr(currentScript, "color", "0,0,0"),
-            n: parseInt(getAttr(currentScript, "count", 60))  // 点数量默认60
+            n: parseInt(getAttr(currentScript, "count", 50))  // 点数量默认60
         };
     }
 
