@@ -16,7 +16,7 @@
             z: 10, // z-index 可自定义
             o: getAttr(currentScript, "opacity", 0.5),
             c: getAttr(currentScript, "color", "0,0,0"),
-            n: getAttr(currentScript, "count", 99)
+            n: getAttr(currentScript, "count", 150)
         };
     }
 
@@ -95,7 +95,7 @@
         const y = random() * window.innerHeight;
         const vx = (random() * 2 - 1);
         const vy = (random() * 2 - 1);
-        points.push({ x, y, vx, vy, max: 6000 });
+        points.push({ x, y, vx, vy, max: 10000 });
     }
 
     allPoints = points.concat([mouse]);
