@@ -1,7 +1,7 @@
 !function () {
     // 判断是否为移动设备（用于点数自适应）
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const defaultCount = isMobile ? 40 : 80;  // 手机端减少点数，电脑端为80
+    const defaultCount = isMobile ? 20 : 80;  // 手机端减少点数，电脑端为80
 
     // 获取 <script> 属性的工具函数
     function getAttr(node, attr, defaultValue) {
