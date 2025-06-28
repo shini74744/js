@@ -1,7 +1,7 @@
 !function () {
     // 判断是否为移动设备（用于点数自适应）
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    const defaultCount = isMobile ? 20 : 80;  // 手机端减少点数，电脑端为80
+    const defaultCount = isMobile ? 40 : 80;  // 手机端减少点数，电脑端为80
 
     // 获取 <script> 属性的工具函数
     function getAttr(node, attr, defaultValue) {
@@ -13,7 +13,7 @@
         const scripts = document.getElementsByTagName("script");
         const currentScript = scripts[scripts.length - 1];  // 获取当前脚本
         return {
-            z: 10,  // z-index 层级
+            z: 0,  // z-index 改为 0，确保canvas在背景层
             o: getAttr(currentScript, "opacity", 0.5), // 透明度
             n: parseInt(getAttr(currentScript, "count", defaultCount))  // 点的数量（默认根据设备）
         };
@@ -48,10 +48,10 @@
     const ctx = canvas.getContext("2d");
     let width, height;
 
-    // 设置 canvas 样式并插入页面
+    // 设置 canvas 样式并插入页面末尾，保证作为背景层
     canvas.id = "canvas-nest";
     canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;z-index:${config.z};opacity:${config.o};pointer-events:none`;
-    document.body.insertBefore(canvas, document.body.firstChild);
+    document.body.appendChild(canvas);  // 放到 body 最后面
 
     const points = [];
     const mouse = { x: null, y: null, max: 20000 };  // 鼠标点：用于吸引效果
