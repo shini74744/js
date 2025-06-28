@@ -13,7 +13,7 @@
         const scripts = document.getElementsByTagName("script");
         const currentScript = scripts[scripts.length - 1];  // 获取当前脚本
         return {
-            z: 0,  // z-index 改为 0，确保canvas在背景层
+            z: 0,  // 修改 z-index 层级为0，确保在视频背景下方
             o: getAttr(currentScript, "opacity", 0.5), // 透明度
             n: parseInt(getAttr(currentScript, "count", defaultCount))  // 点的数量（默认根据设备）
         };
@@ -48,10 +48,10 @@
     const ctx = canvas.getContext("2d");
     let width, height;
 
-    // 设置 canvas 样式并插入页面末尾，保证作为背景层
+    // 设置 canvas 样式并插入页面
     canvas.id = "canvas-nest";
     canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;z-index:${config.z};opacity:${config.o};pointer-events:none`;
-    document.body.appendChild(canvas);  // 放到 body 最后面
+    document.body.appendChild(canvas);  // 改为appendChild，放到body最后面，确保视频背景在canvas上方
 
     const points = [];
     const mouse = { x: null, y: null, max: 20000 };  // 鼠标点：用于吸引效果
