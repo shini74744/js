@@ -1,8 +1,6 @@
 !function () {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile) return; // 手机端不加载动画，避免干扰
-
-    const defaultCount = 60;
+    const defaultCount = isMobile ? 20 : 60;
 
     function getAttr(node, attr, defaultValue) {
         return node.getAttribute(attr) || defaultValue;
@@ -12,8 +10,8 @@
         const scripts = document.getElementsByTagName("script");
         const currentScript = scripts[scripts.length - 1];
         return {
-            z: 0,  // 放在背景层下方
-            o: getAttr(currentScript, "opacity", 0.5),
+            z: -1,  // ✅ 保证在最底层，避免遮挡
+            o: getAttr(currentScript, "opacity", 0.4),  // 可调透明度
             n: parseInt(getAttr(currentScript, "count", defaultCount))
         };
     }
@@ -45,7 +43,7 @@
 
     canvas.id = "canvas-nest";
     canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;z-index:${config.z};opacity:${config.o};pointer-events:none`;
-    document.body.appendChild(canvas); // 插入页面底部，确保不遮挡视频背景
+    document.body.insertBefore(canvas, document.body.firstChild);  // ✅ 插入最底部
 
     const points = [];
     const mouse = { x: null, y: null, max: 20000 };
