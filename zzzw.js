@@ -10,8 +10,8 @@
         const scripts = document.getElementsByTagName("script");
         const currentScript = scripts[scripts.length - 1];
         return {
-            z: -1,  // ✅ 保证在最底层，避免遮挡
-            o: getAttr(currentScript, "opacity", 0.4),  // 可调透明度
+            z: 1,  // ✅ 显示在视频或图片背景之上，不会被遮挡
+            o: getAttr(currentScript, "opacity", 0.4),
             n: parseInt(getAttr(currentScript, "count", defaultCount))
         };
     }
@@ -43,7 +43,7 @@
 
     canvas.id = "canvas-nest";
     canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;z-index:${config.z};opacity:${config.o};pointer-events:none`;
-    document.body.insertBefore(canvas, document.body.firstChild);  // ✅ 插入最底部
+    document.body.insertBefore(canvas, document.body.firstChild);  // ✅ 插入最前，确保不被挡住
 
     const points = [];
     const mouse = { x: null, y: null, max: 20000 };
