@@ -1,4 +1,5 @@
-!function () {
+setTimeout(() => {
+  !function () {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const defaultCount = isMobile ? 20 : 60;
 
@@ -10,7 +11,7 @@
         const scripts = document.getElementsByTagName("script");
         const currentScript = scripts[scripts.length - 1];
         return {
-            z: 5,  // 适当提高层级，确保覆盖背景但不影响内容
+            z: 5,
             o: getAttr(currentScript, "opacity", 0.4),
             n: parseInt(getAttr(currentScript, "count", defaultCount))
         };
@@ -43,7 +44,7 @@
 
     canvas.id = "canvas-nest";
     canvas.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;z-index:${config.z};opacity:${config.o};pointer-events:none;`;
-    document.body.appendChild(canvas); // 放到body最后，确保覆盖背景视频
+    document.body.appendChild(canvas);
 
     const points = [];
     const mouse = { x: null, y: null, max: 20000 };
@@ -121,4 +122,5 @@
 
     const allPoints = points.concat([mouse]);
     requestAnimationFrame(draw);
-}();
+  }();
+}, 2000);
