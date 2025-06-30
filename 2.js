@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   const p = document.querySelector('p.text-base.font-semibold');
-  if (!p) return;
+
+  if (!p) {
+    console.warn('❌ 没有找到 <p class="text-base font-semibold"> 元素');
+    return;
+  }
 
   const greetings = {
     morning: ['🌅 早上好，新的一天开始啦～', '🌞 早上好！今天也要元气满满～'],
@@ -27,5 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const hour = new Date().getHours();
-  p.textContent = getGreetingByHour(hour);
+  const greeting = getGreetingByHour(hour);
+  console.log(`🕒 当前小时：${hour}，问候语：${greeting}`);
+  p.textContent = greeting;
 });
