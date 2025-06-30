@@ -13,7 +13,7 @@ if (p) {
   } else if (hour >= 14 && hour < 18) {
     greeting = '🌞 下午好';
   } else if (hour >= 18 && hour < 20) {
-    greeting = '🌇 傍晚好';
+    greeting = '🌇 🌇 傍晚好，准备下班了吗～';
   } else if (hour >= 20 && hour < 24) {
     greeting = '🌙 晚上好';
   } else {
