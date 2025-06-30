@@ -17,7 +17,7 @@ if (p) {
   } else if (hour >= 20 && hour < 24) {
     greeting = '🌙 晚上好';
   } else {
-    greeting = '🌌 夜深了，该休息了';
+    greeting = '🌌 夜深了 该休息啦';
   }
 
   p.textContent = greeting;
