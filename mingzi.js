@@ -4,17 +4,18 @@
     return document.querySelectorAll('p.break-normal.font-bold.tracking-tight.text-xs');
   }
 
-  // 根据当前小时数计算名字的颜色（在线时使用）
-  // 颜色在蓝绿(200°)和黄绿(60°)之间渐变，hsl色相变化
-  function getColorByHour(hour) {
-    let hue;
-    if (hour <= 12) {
-      // 0~12点，色相从200递减到60
-      hue = 200 - ((200 - 60) / 12) * hour;
-    } else {
-      // 13~23点，色相从60递增到200
-      hue = 60 + ((200 - 60) / 12) * (hour - 12);
-    }
+  // 根据时间生成彩虹色（跳过红色，避免与离线冲突）
+  function getCurrentRainbowColor() {
+    const now = new Date();
+    // 每5分钟一圈，周期为5分钟 = 300000ms
+    const cycle = 300000;
+    const t = now.getTime() % cycle;
+    const progress = t / cycle; // 0 ~ 1
+
+    // 色相范围跳过红色区（默认红为0°）
+    // 我们用 [30°, 330°] 范围，排除 ±30° 红色
+    const hue = 30 + progress * 300; // 从30~330度
+
     return `hsl(${hue.toFixed(0)}, 80%, 60%)`;
   }
 
@@ -44,23 +45,20 @@
   let direction = 1;
 
   // 给所有名字元素应用对应颜色
-  // 离线的名字先固定为半透明红色，闪烁由定时器控制
-  // 在线的名字根据当前小时设置动态色
+  // 离线的名字固定为红色，闪烁由定时器控制
+  // 在线的名字使用动态彩虹色
   function applyColorToNames() {
-    const now = new Date();
-    const hour = now.getHours();
-
     offlineElements.clear(); // 清空之前离线元素集合
 
     getNameElements().forEach(el => {
       if (isOffline(el)) {
         offlineElements.add(el);
-        // 离线名字初始颜色，后续通过闪烁定时器切换透明度
+        // 离线名字红色，后续通过闪烁定时器切换透明度
         el.style.setProperty("color", "rgba(255, 0, 0, 0.6)", "important");
         el.dataset.colorized = "offline";
       } else {
-        // 在线名字根据时间渐变色
-        el.style.setProperty("color", getColorByHour(hour), "important");
+        // 在线名字使用当前彩虹色
+        el.style.setProperty("color", getCurrentRainbowColor(), "important");
         el.dataset.colorized = "online";
       }
     });
@@ -69,22 +67,31 @@
   // 定时器，每100毫秒运行一次，平滑切换离线名字的透明度，实现闪烁效果
   setInterval(() => {
     // 计算当前透明度，范围0.4 ~ 0.8之间循环
-    progress += direction * 0.05; // 0.05 * 20 = 1 完成一次周期
+    progress += direction * 0.05;
     if (progress >= 1) {
       progress = 1;
-      direction = -1; // 达到最大透明度后，开始递减
+      direction = -1;
     } else if (progress <= 0) {
       progress = 0;
-      direction = 1; // 达到最小透明度后，开始递增
+      direction = 1;
     }
 
-    const alpha = 0.4 + progress * 0.4; // 透明度区间[0.4, 0.8]
+    const alpha = 0.4 + progress * 0.4;
 
     // 给所有离线名字元素设置当前透明度的红色
     offlineElements.forEach(el => {
       el.style.setProperty("color", `rgba(255, 0, 0, ${alpha.toFixed(2)})`, "important");
     });
   }, 100);
+
+  // 每秒更新一次在线名字颜色（动画过渡流畅）
+  setInterval(() => {
+    getNameElements().forEach(el => {
+      if (el.dataset.colorized === "online") {
+        el.style.setProperty("color", getCurrentRainbowColor(), "important");
+      }
+    });
+  }, 1000);
 
   // 首次执行，立即应用颜色
   applyColorToNames();
@@ -95,15 +102,14 @@
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
-  // 计算距离下一个小时整点的毫秒数
+  // 原有的每小时刷新逻辑仍保留
   function msToNextHour() {
     const now = new Date();
     return (60 - now.getMinutes()) * 60 * 1000 - now.getSeconds() * 1000 - now.getMilliseconds();
   }
 
-  // 在下一个小时整点刷新颜色，并设置后续每小时刷新
   setTimeout(function tick() {
     applyColorToNames();
-    setTimeout(tick, 60 * 60 * 1000); // 每小时执行一次
+    setTimeout(tick, 60 * 60 * 1000);
   }, msToNextHour());
 })();
