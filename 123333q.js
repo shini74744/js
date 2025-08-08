@@ -8,7 +8,6 @@ function addBlueRotateWhenReady() {
         .blue-fine-rotate {
           position: relative;
           z-index: 0;
-          /* 不加 border 保持大小 */
           outline: none;
         }
         .blue-fine-rotate::before {
@@ -19,18 +18,36 @@ function addBlueRotateWhenReady() {
           right: -6px;
           bottom: -6px;
           border-radius: 56px;
-          background: 
-            conic-gradient(from 0deg, rgba(0,112,255,0.8), rgba(0,112,255,0) 70%);
+          background:
+            conic-gradient(
+              from 0deg,
+              rgba(0, 112, 255, 0.85),
+              rgba(0, 180, 255, 0.7) 40%,
+              rgba(0, 112, 255, 0.6) 70%,
+              rgba(0, 180, 255, 0.4) 85%,
+              rgba(0, 112, 255, 0)
+            );
           box-shadow:
-            0 0 8px 3px rgba(0,112,255,0.6),
-            0 0 12px 5px rgba(0,112,255,0.4);
-          animation: fine-rotate 1.5s linear infinite;
+            0 0 10px 3px rgba(0, 112, 255, 0.7),
+            0 0 20px 6px rgba(0, 180, 255, 0.4),
+            0 0 30px 10px rgba(0, 112, 255, 0.3);
+          animation: fine-rotate 2s linear infinite, pulseGlow 3s ease-in-out infinite;
           z-index: 1;
           pointer-events: none;
         }
         @keyframes fine-rotate {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
+        }
+        @keyframes pulseGlow {
+          0%, 100% {
+            filter: brightness(1);
+            opacity: 1;
+          }
+          50% {
+            filter: brightness(1.3);
+            opacity: 0.8;
+          }
         }
       `;
       document.head.appendChild(style);
