@@ -7,26 +7,25 @@ function addBlueRotateWhenReady() {
       style.textContent = `
         .blue-fine-rotate {
           position: relative;
-          /* 不设置border，避免撑大元素 */
-          /* 不增加padding，保持大小 */
-          outline: none;
           z-index: 0;
+          /* 不加 border 保持大小 */
+          outline: none;
         }
         .blue-fine-rotate::before {
           content: '';
           position: absolute;
-          top: -6px;    /* 向外扩展6px */
+          top: -6px;
           left: -6px;
           right: -6px;
           bottom: -6px;
-          border-radius: 56px; /* 根据元素圆角微调 */
-          border: 2px solid rgba(0, 112, 255, 0.8);
+          border-radius: 56px;
+          background: 
+            conic-gradient(from 0deg, rgba(0,112,255,0.8), rgba(0,112,255,0) 70%);
           box-shadow:
-            0 0 6px 1px rgba(0, 112, 255, 0.7),
-            0 0 12px 3px rgba(0, 112, 255, 0.5),
-            0 0 20px 5px rgba(0, 112, 255, 0.3);
+            0 0 8px 3px rgba(0,112,255,0.6),
+            0 0 12px 5px rgba(0,112,255,0.4);
           animation: fine-rotate 1.5s linear infinite;
-          z-index: -1;
+          z-index: 1;
           pointer-events: none;
         }
         @keyframes fine-rotate {
