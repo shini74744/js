@@ -7,20 +7,24 @@ function addBlueRotateWhenReady() {
       style.textContent = `
         .blue-fine-rotate {
           position: relative;
-          border-radius: 50px;
+          /* 不设置border，避免撑大元素 */
+          /* 不增加padding，保持大小 */
+          outline: none;
           z-index: 0;
-          border: 3px solid transparent;
         }
         .blue-fine-rotate::before {
           content: '';
           position: absolute;
-          top: -3px; left: -3px; right: -3px; bottom: -3px;
-          border-radius: 53px;
+          top: -6px;    /* 向外扩展6px */
+          left: -6px;
+          right: -6px;
+          bottom: -6px;
+          border-radius: 56px; /* 根据元素圆角微调 */
           border: 2px solid rgba(0, 112, 255, 0.8);
           box-shadow:
-            0 0 5px 1px rgba(0, 112, 255, 0.7),
-            0 0 10px 2px rgba(0, 112, 255, 0.5),
-            0 0 15px 3px rgba(0, 112, 255, 0.3);
+            0 0 6px 1px rgba(0, 112, 255, 0.7),
+            0 0 12px 3px rgba(0, 112, 255, 0.5),
+            0 0 20px 5px rgba(0, 112, 255, 0.3);
           animation: fine-rotate 1.5s linear infinite;
           z-index: -1;
           pointer-events: none;
@@ -34,10 +38,8 @@ function addBlueRotateWhenReady() {
     }
     target.classList.add('blue-fine-rotate');
   } else {
-    // 元素没找到，1秒后再试
     setTimeout(addBlueRotateWhenReady, 1000);
   }
 }
 
-// 启动检测
 addBlueRotateWhenReady();
