@@ -10,6 +10,7 @@ function addBlueRotateWhenReady() {
           z-index: 0;
           outline: none;
         }
+        /* 第一个伪元素 */
         .blue-fine-rotate::before {
           content: '';
           position: absolute;
@@ -33,6 +34,31 @@ function addBlueRotateWhenReady() {
             0 0 30px 10px rgba(0, 112, 255, 0.3);
           animation: fine-rotate 2s linear infinite, pulseGlow 3s ease-in-out infinite;
           z-index: 1;
+          pointer-events: none;
+        }
+        /* 第二个伪元素，制造叠加效果 */
+        .blue-fine-rotate::after {
+          content: '';
+          position: absolute;
+          top: -9px;
+          left: -9px;
+          right: -9px;
+          bottom: -9px;
+          border-radius: 59px;
+          background:
+            conic-gradient(
+              from 180deg,
+              rgba(0, 112, 255, 0.6),
+              rgba(0, 180, 255, 0.4) 40%,
+              rgba(0, 112, 255, 0.3) 70%,
+              rgba(0, 180, 255, 0.2) 85%,
+              rgba(0, 112, 255, 0)
+            );
+          box-shadow:
+            0 0 15px 5px rgba(0, 112, 255, 0.5),
+            0 0 25px 8px rgba(0, 180, 255, 0.3);
+          animation: fine-rotate 3.5s linear infinite reverse, pulseGlow 4s ease-in-out infinite;
+          z-index: 0;
           pointer-events: none;
         }
         @keyframes fine-rotate {
