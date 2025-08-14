@@ -1,3 +1,5 @@
+// 统计卡片的上下传速率颜色实现代码
+
 (function () {
   const REFRESH_INTERVAL = 500;
   const MAX_SPEED = 50 * 1024 * 1024;
