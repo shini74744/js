@@ -1,3 +1,5 @@
+// 顶部左边的图片api实现代码
+
 // 等待 DOM 加载完成再执行
 document.addEventListener('DOMContentLoaded', function () {
 
