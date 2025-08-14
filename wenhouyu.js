@@ -1,3 +1,5 @@
+// 顶部左边问候语实现代码
+
 const p = document.querySelector('p.text-base.font-semibold');
 
 if (p) {
