@@ -1,3 +1,5 @@
+// 顶部显示的文字api代码
+
 // 页面 DOM 完全加载后执行
 document.addEventListener('DOMContentLoaded', () => {
 
