@@ -12,7 +12,7 @@ function formatRuntime(diff) {
     const seconds = Math.floor((diff / 1000) % 60); // 秒数
 
     // 返回格式化后的描述
-    return `专业服务，术先行；网站已运行${days}天${hours}小时${minutes}分${seconds}秒`;
+    return `专业服务， 技术先行；网站已运行${days}天${hours}小时${minutes}分${seconds}秒`;
 }
 
 // 3. 更新运行时间
