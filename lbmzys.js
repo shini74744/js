@@ -1,3 +1,5 @@
+// 列表名字颜色变化实现代码
+
 (function () {
   // 获取所有服务器名字的 <p> 元素，符合这个类名选择器
   function getNameElements() {
