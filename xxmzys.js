@@ -1,3 +1,5 @@
+// 详细名颜色变化实现代码
+
 (function () {
   // 获取详细页中服务器名字的元素
   function getDetailNameElement() {
