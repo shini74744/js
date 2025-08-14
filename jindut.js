@@ -1,3 +1,5 @@
+// 进度条显示实现代码
+
 const SCRIPT_VERSION = 'v20250617';
 
 function injectCustomCSS() {
