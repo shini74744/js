@@ -1,3 +1,5 @@
+// 卡片的上下传速率颜色实现代码
+
 
 (function () {
   const REFRESH_INTERVAL = 500; // 刷新间隔，单位毫秒，越小刷新越频繁
