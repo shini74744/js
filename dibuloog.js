@@ -1,3 +1,5 @@
+// 底部loog的颜色变化样式代码
+
 document.addEventListener('DOMContentLoaded', () => {
     // ---- 1. 动态创建样式 ----
     const style = document.createElement('style');
