@@ -1,3 +1,5 @@
+// 顶部圆圈的显示代码
+
 function addBlueRotateWhenReady() {
   const target = document.querySelector('.scrollbar-hidden.z-50.flex.flex-col.items-start.overflow-x-scroll.rounded-\\[50px\\] > .flex.items-center.gap-1.rounded-\\[50px\\].bg-stone-100.p-\\[3px\\].dark\\:bg-stone-800');
   if (target) {
