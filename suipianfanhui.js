@@ -1,3 +1,5 @@
+// 生成碎片点击和返回顶部的代码
+
 document.addEventListener("DOMContentLoaded", () => {
     /** 
      * 1. 动态创建样式表 
