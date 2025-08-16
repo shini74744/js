@@ -9,7 +9,7 @@
       e.keyCode === 123 ||                     // F12
       (e.ctrlKey && e.shiftKey && e.keyCode === 67) || // Ctrl+Shift+C
       (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
-      (e.ctrlKey && e.keyCode === 85)                 // Ctrl+U
+      (e.ctrlKey && e.keyKeyCode === 85)                 // Ctrl+U
     ) {
       e.preventDefault();
       alert("检测到开发者工具快捷键，操作被阻止");
@@ -54,12 +54,11 @@
   try { antiDebug(); } catch (err) {}
 
   // -------------------------------
-  // 4. 禁用右键
+  // 4. 禁用右键（不跳转）
   // -------------------------------
   document.addEventListener("contextmenu", e => {
     e.preventDefault();
     alert("右键已被禁用");
-    window.location.href = jumpUrl;
   });
 
   // -------------------------------
@@ -67,7 +66,7 @@
   // -------------------------------
   document.addEventListener('selectstart', e => e.preventDefault());
   document.addEventListener('mousedown', e => {
-    if (e.button === 2) e.preventDefault();
+    if (e.button === 2) e.preventDefault(); // 再次防护右键
   });
 
   // CSS 防止选中
