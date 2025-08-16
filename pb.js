@@ -29,8 +29,7 @@
             font-size:24px;
             text-align:center;
         `;
-        overlay.innerText = '检测到开发者工具，页面已禁用
-勿做小偷 联系我正常获取';
+        overlay.innerText = '检测到开发者工具，页面已禁用';
         document.body.appendChild(overlay);
     }
 
