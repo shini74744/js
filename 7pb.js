@@ -1,34 +1,26 @@
-// 哪吒监控自定义安全防护代码（疯狂闪动版）
+// 哪吒监控自定义安全防护代码（文字闪烁版）
 (function() {
 
-    function blockPageWithCrazyFlash() {
-        document.body.innerHTML = '<h2 id="blockMsg" style="color:red;text-align:center;margin-top:20%;">检测到开发者工具，页面已禁用<br>勿做小偷，联系我正常获取</h2>';
-        document.body.style.transition = 'none';
+    function blockPageWithTextFlash() {
+        // 白屏并显示提示文字
+        document.body.innerHTML = '<h2 id="blockMsg" style="text-align:center;margin-top:20%;font-size:24px;">检测到开发者工具，页面已禁用<br>勿做小偷，联系我正常获取</h2>';
+        document.body.style.backgroundColor = 'white';
         document.body.style.margin = '0';
         document.body.style.height = '100vh';
         document.body.style.display = 'flex';
         document.body.style.justifyContent = 'center';
-        document.body.style.alignItems = 'center';
+        document.body.style.alignItems = 'flex-start';
         document.body.style.overflow = 'hidden';
 
-        // 两秒后开始疯狂闪烁和抖动
+        // 两秒后开始文字颜色闪烁
         setTimeout(() => {
             setInterval(() => {
-                // 背景红蓝交替
-                const bgColor = Math.random() > 0.5 ? 'red' : 'blue';
-                document.body.style.backgroundColor = bgColor;
-
-                // 文字颜色随机
+                const colors = ['red', 'blue', 'green', 'orange', 'purple'];
                 const msg = document.getElementById('blockMsg');
                 if (msg) {
-                    msg.style.color = Math.random() > 0.5 ? 'yellow' : 'green';
+                    msg.style.color = colors[Math.floor(Math.random() * colors.length)];
                 }
-
-                // 页面抖动
-                const offsetX = Math.floor(Math.random() * 20 - 10); // -10 ~ 10 px
-                const offsetY = Math.floor(Math.random() * 20 - 10);
-                document.body.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-            }, 100); // 每100ms更新
+            }, 200); // 每200ms切换一次文字颜色
         }, 2000);
     }
 
@@ -54,7 +46,7 @@
         const threshold = 160;
         if (window.outerWidth - window.innerWidth > threshold || 
             window.outerHeight - window.innerHeight > threshold) {
-            blockPageWithCrazyFlash();
+            blockPageWithTextFlash();
             alert('检测到开发者工具，页面已禁用\n勿做小偷，联系我正常获取');
         }
     }, 1000);
@@ -70,10 +62,5 @@
         });
         console.log(element);
         if (open) {
-            blockPageWithCrazyFlash();
-            alert('检测到开发者工具，页面已禁用\n勿做小偷，联系我正常获取');
-        }
-        setTimeout(detectDevTools, 1000);
-    })();
-
-})();
+            blockPageWithTextFlash();
+            alert('检测到开发者工具，页面已禁用\n勿做小偷，联系我正
