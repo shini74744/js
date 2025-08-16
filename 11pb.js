@@ -1,4 +1,4 @@
-// 哪吒监控终极安全防护
+// 哪吒监控终极安全防护（升级版）
 (function() {
 
     let pageDisabled = false; // 是否已触发白屏
@@ -6,7 +6,7 @@
     // ---------- 禁止 F12 / Ctrl+Shift+I/C/J ----------
     document.addEventListener('keydown', function(e) {
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase()))) {
-            e.preventDefault(); // 阻止按键，但不弹 alert
+            e.preventDefault(); // 阻止按键
         }
     });
 
@@ -31,6 +31,7 @@
             justify-content:center;
             font-size:24px;
             text-align:center;
+            white-space: pre-line; /* 支持换行 */
         `;
         overlay.innerText = '检测到开发者工具，页面已禁用\n勿做小偷 联系我正常获取';
         document.body.appendChild(overlay);
@@ -51,15 +52,22 @@
 
         setTimeout(detectDevTools, 1000);
     }
-    detectDevTools();
 
-    // ---------- 关键 DOM 元素监控 ----------
-    const criticalSelectors = ['.video-box', '#ip-iframe', '.snowflake']; // 可加你其他重要元素
-    setInterval(()=>{
-        criticalSelectors.forEach(sel=>{
-            const elems = document.querySelectorAll(sel);
-            if(elems.length === 0){ disablePage(); }
-        });
-    }, 2000);
+    // ---------- 延迟启动监控 ----------
+    window.addEventListener('load', () => {
+        // 延迟启动 DevTools 检测
+        setTimeout(detectDevTools, 2000);
+
+        // 延迟启动关键 DOM 监控，避免页面未渲染时误触发
+        const criticalSelectors = ['.video-box', '#ip-iframe', '.snowflake']; 
+        setTimeout(() => {
+            setInterval(()=>{
+                criticalSelectors.forEach(sel=>{
+                    const elems = document.querySelectorAll(sel);
+                    if(elems.length === 0){ disablePage(); }
+                });
+            }, 2000);
+        }, 2000);
+    });
 
 })();
