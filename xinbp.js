@@ -1,5 +1,5 @@
 (() => {
-  const jumpUrl = "https://www.baidu.com"; // 自定义跳转页面
+  const jumpUrl = "https://www.bing.com"; // 自定义跳转页面
 
   // -------------------------------
   // 1. 禁用快捷键
