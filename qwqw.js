@@ -9,7 +9,7 @@
       e.keyCode === 123 ||                     // F12
       (e.ctrlKey && e.shiftKey && e.keyCode === 67) || // Ctrl+Shift+C
       (e.ctrlKey && e.shiftKey && e.keyCode === 73) || // Ctrl+Shift+I
-      (e.ctrlKey && e.keyKeyCode === 85)                 // Ctrl+U
+      (e.ctrlKey && e.keyCode === 85)                 // Ctrl+U
     ) {
       e.preventDefault();
       alert("检测到开发者工具快捷键，操作被阻止");
@@ -34,7 +34,7 @@
     const heightDiff = Math.abs(window.innerHeight - lastHeight);
 
     if ((widthDiff > 50 || heightDiff > 50) && !isFullScreen()) {
-      alert("检测到异常窗口变化，请关闭开发者工具");
+      alert("检测到异常窗口变化，请关闭开发者工具。如果你想查看页面元素代码，用在自己网页上，请不要做小偷，正常联系我获取。");
       window.location.href = jumpUrl;
     }
 
@@ -66,7 +66,7 @@
   // -------------------------------
   document.addEventListener('selectstart', e => e.preventDefault());
   document.addEventListener('mousedown', e => {
-    if (e.button === 2) e.preventDefault(); // 再次防护右键
+    if (e.button === 2) e.preventDefault();
   });
 
   // CSS 防止选中
