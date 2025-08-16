@@ -1,19 +1,22 @@
-// 哪吒监控升级版安全防护
+// 哪吒监控终极安全防护
 (function() {
+
+    let pageDisabled = false; // 是否已触发白屏
 
     // ---------- 禁止 F12 / Ctrl+Shift+I/C/J ----------
     document.addEventListener('keydown', function(e) {
         if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase()))) {
-            e.preventDefault();
+            e.preventDefault(); // 阻止按键，但不弹 alert
         }
     });
 
     // ---------- 禁止右键 ----------
     document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
-    document.addEventListener('mousedown', function(e){ if(e.button===2) e.preventDefault(); });
 
     // ---------- 白屏遮罩 ----------
     function disablePage(){
+        if(pageDisabled) return;
+        pageDisabled = true;
         document.body.innerHTML = '';
         const overlay = document.createElement('div');
         overlay.style.cssText = `
@@ -29,7 +32,7 @@
             font-size:24px;
             text-align:center;
         `;
-        overlay.innerText = '检测到开发者工具，页面已禁用';
+        overlay.innerText = '检测到开发者工具，页面已禁用\n勿做小偷 联系我正常获取';
         document.body.appendChild(overlay);
     }
 
@@ -40,14 +43,12 @@
             disablePage();
         }
 
-        // 利用 console getter 检测
         let detected = false;
         const element = new Image();
         Object.defineProperty(element, 'id', { get(){ detected = true; } });
         console.log(element);
         if(detected){ disablePage(); }
 
-        // debugger 检测（性能帧率异常可加）
         setTimeout(detectDevTools, 1000);
     }
     detectDevTools();
