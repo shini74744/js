@@ -1,27 +1,38 @@
-// 哪吒监控自定义安全防护代码（疯狂闪烁版）
+// 哪吒监控自定义安全防护代码（疯狂闪动版）
 (function() {
 
-    // 显示白屏提示并启动疯狂红蓝闪烁
     function blockPageWithCrazyFlash() {
         document.body.innerHTML = '<h2 id="blockMsg" style="color:red;text-align:center;margin-top:20%;">检测到开发者工具，页面已禁用<br>勿做小偷，联系我正常获取</h2>';
-        document.body.style.transition = 'background-color 0.1s';
+        document.body.style.transition = 'none';
+        document.body.style.margin = '0';
+        document.body.style.height = '100vh';
+        document.body.style.display = 'flex';
+        document.body.style.justifyContent = 'center';
+        document.body.style.alignItems = 'center';
+        document.body.style.overflow = 'hidden';
 
-        // 两秒后开始疯狂闪烁
+        // 两秒后开始疯狂闪烁和抖动
         setTimeout(() => {
             setInterval(() => {
-                // 随机背景颜色红/蓝交替，加入一点随机亮度
-                const bgColor = Math.random() > 0.5 ? `rgb(${255},0,0)` : `rgb(0,0,255)`;
-                const textColor = Math.random() > 0.5 ? `rgb(0,255,0)` : `rgb(255,255,0)`;
+                // 背景红蓝交替
+                const bgColor = Math.random() > 0.5 ? 'red' : 'blue';
                 document.body.style.backgroundColor = bgColor;
+
+                // 文字颜色随机
                 const msg = document.getElementById('blockMsg');
                 if (msg) {
-                    msg.style.color = textColor;
+                    msg.style.color = Math.random() > 0.5 ? 'yellow' : 'green';
                 }
-            }, 100); // 每100ms切换一次，闪烁更快
+
+                // 页面抖动
+                const offsetX = Math.floor(Math.random() * 20 - 10); // -10 ~ 10 px
+                const offsetY = Math.floor(Math.random() * 20 - 10);
+                document.body.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            }, 100); // 每100ms更新
         }, 2000);
     }
 
-    // 1️⃣ 禁止 F12 / Ctrl+Shift+I / Ctrl+Shift+C / Ctrl+Shift+J
+    // 禁止 F12 / Ctrl+Shift+I / Ctrl+Shift+C / Ctrl+Shift+J
     document.addEventListener('keydown', function(e) {
         if (
             e.key === 'F12' || 
@@ -32,13 +43,13 @@
         }
     });
 
-    // 2️⃣ 禁止右键菜单
+    // 禁止右键
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
         alert('右键已禁用\n勿做小偷，联系我正常获取');
     });
 
-    // 3️⃣ 检测 DevTools 打开（窗口尺寸差异）
+    // 检测 DevTools（窗口尺寸差异）
     setInterval(function() {
         const threshold = 160;
         if (window.outerWidth - window.innerWidth > threshold || 
@@ -48,7 +59,7 @@
         }
     }, 1000);
 
-    // 4️⃣ debugger 检测 DevTools
+    // debugger 检测 DevTools
     (function detectDevTools() {
         let open = false;
         const element = new Image();
