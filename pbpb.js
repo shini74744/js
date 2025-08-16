@@ -1,48 +1,47 @@
-// 哪吒监控自定义安全防护代码
-(function() {
+<script>
+// === 禁止 F12 / Ctrl+Shift+I/J/C ===
+document.onkeydown = function(e) {
+  if (
+    e.keyCode === 123 || // F12
+    (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) // I J C
+  ) {
+    e.preventDefault();
+    return false;
+  }
+};
 
-    // 1️⃣ 禁止 F12 / Ctrl+Shift+I / Ctrl+Shift+C / Ctrl+Shift+J
-    document.addEventListener('keydown', function(e) {
-        if (
-            e.key === 'F12' || 
-            (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase()))
-        ) {
-            e.preventDefault();
-            alert('开发者工具已禁用\n勿做小偷，联系我正常获取');
-        }
-    });
+// === 检测开发者工具 ===
+let devtoolsOpen = false;
 
-    // 2️⃣ 禁止右键菜单
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        alert('右键已禁用\n勿做小偷，联系我正常获取');
-    });
+function detectDevTools() {
+  const threshold = 160; // 判断阈值
+  if (
+    window.outerWidth - window.innerWidth > threshold ||
+    window.outerHeight - window.innerHeight > threshold
+  ) {
+    if (!devtoolsOpen) {
+      devtoolsOpen = true;
+      blockPage();
+    }
+  } else {
+    devtoolsOpen = false;
+  }
+}
 
-    // 3️⃣ 检测 DevTools 打开（窗口尺寸差异）
-    setInterval(function() {
-        const threshold = 160; // 控制台打开时通常 width/height 改变
-        if (window.outerWidth - window.innerWidth > threshold || 
-            window.outerHeight - window.innerHeight > threshold) {
-            document.body.innerHTML = '<h2 style="color:red;text-align:center;margin-top:20%;">检测到开发者工具，页面已禁用<br>勿做小偷，联系我正常获取</h2>';
-            alert('检测到开发者工具，页面已禁用\n勿做小偷，联系我正常获取');
-        }
-    }, 1000);
+function blockPage() {
+  document.body.innerHTML = `
+    <div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:bold;color:#fff;background:#000;">
+      ⚠️ 检测到开发者工具，页面已禁用<br/>勿做小偷，联系我正常获取
+    </div>
+  `;
+  let colors = ["red", "blue"];
+  let i = 0;
+  setInterval(() => {
+    document.body.style.backgroundColor = colors[i % 2];
+    i++;
+  }, 150);
+}
 
-    // 4️⃣ debugger 检测 DevTools
-    (function detectDevTools() {
-        let open = false;
-        const element = new Image();
-        Object.defineProperty(element, 'id', {
-            get: function() {
-                open = true;
-            }
-        });
-        console.log(element);
-        if (open) {
-            document.body.innerHTML = '<h2 style="color:red;text-align:center;margin-top:20%;">检测到开发者工具，页面已禁用<br>勿做小偷，联系我正常获取</h2>';
-            alert('检测到开发者工具，页面已禁用\n勿做小偷，联系我正常获取');
-        }
-        setTimeout(detectDevTools, 1000);
-    })();
-
-})();
+// 定时检测
+setInterval(detectDevTools, 1000);
+</script>
