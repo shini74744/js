@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
         position: 'absolute', // 绝对定位
         width: '100px',
         height: '100px',
-        backgroundImage: "url('https://api.vvhan.com/api/avatar/dm')", // 插图背景图
+        backgroundImage: "url('https://api.mtyqx.cn/tapi/random.php')", // 插图背景图
         backgroundSize: 'contain',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
