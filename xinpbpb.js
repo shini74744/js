@@ -1,17 +1,54 @@
 (() => {
-  const jumpUrl = "https://www.baidu.com"; // 自定义跳转页面
+  const jumpUrl = "https://www.bing.com"; // 自定义跳转页面
 
   // -------------------------------
   // 0. 判断是否是移动端
   // -------------------------------
   const isMobile = /Android|iPhone|iPad|iPod|Windows Phone|Mobi/i.test(navigator.userAgent);
   if (isMobile) {
-    console.log("移动端访问，防护脚本不生效");
-    return; // 直接退出，不执行下面的逻辑
+    console.log("移动端访问，启用图片长按保护");
+
+    let touchTimer = null;
+
+    document.addEventListener("touchstart", e => {
+      if (e.target.tagName.toLowerCase() === "img") {
+        // 启动定时器，1 秒后提示
+        touchTimer = setTimeout(() => {
+          alert("⚠️ 此图片已保护，不能保存！");
+        }, 1000);
+        e.preventDefault(); // 阻止默认长按保存菜单
+      }
+    }, { passive: false });
+
+    document.addEventListener("touchend", () => {
+      clearTimeout(touchTimer);
+    });
+
+    document.addEventListener("touchmove", () => {
+      clearTimeout(touchTimer);
+    });
+
+    // 禁止 <img> 长按弹出菜单
+    document.addEventListener("contextmenu", e => {
+      if (e.target.tagName.toLowerCase() === "img") {
+        e.preventDefault();
+      }
+    });
+
+    // 针对图片的 CSS 禁止长按菜单
+    const style = document.createElement("style");
+    style.innerHTML = `
+      img {
+        -webkit-touch-callout: none !important; /* 禁止 iOS 长按保存图片 */
+      }
+    `;
+    document.head.appendChild(style);
+
+    return; // 移动端到此结束，不执行 PC 防护
   }
 
   // -------------------------------
-  // 1. 禁用快捷键
+  // 1. 禁用快捷键 (PC)
   // -------------------------------
   document.addEventListener("keydown", e => {
     if (
@@ -27,7 +64,7 @@
   });
 
   // -------------------------------
-  // 2. 检测窗口尺寸异常变化
+  // 2. 检测窗口尺寸异常变化 (PC)
   // -------------------------------
   let lastWidth = window.innerWidth;
   let lastHeight = window.innerHeight;
@@ -52,7 +89,7 @@
   });
 
   // -------------------------------
-  // 3. 反调试
+  // 3. 反调试 (PC)
   // -------------------------------
   function antiDebug() {
     setInterval(() => {
@@ -63,7 +100,7 @@
   try { antiDebug(); } catch (err) {}
 
   // -------------------------------
-  // 4. 禁用右键（不跳转）
+  // 4. 禁用右键（PC）
   // -------------------------------
   document.addEventListener("contextmenu", e => {
     e.preventDefault();
@@ -71,14 +108,13 @@
   });
 
   // -------------------------------
-  // 5. 禁止选中
+  // 5. 禁止选中（PC）
   // -------------------------------
   document.addEventListener('selectstart', e => e.preventDefault());
   document.addEventListener('mousedown', e => {
     if (e.button === 2) e.preventDefault();
   });
 
-  // CSS 防止选中
   const style = document.createElement('style');
   style.innerHTML = `
     body {
