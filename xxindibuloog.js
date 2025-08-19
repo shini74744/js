@@ -115,8 +115,8 @@ function updateFooterRight() {
     footerRight.appendChild(section);
 }
 
-// 7️⃣ 延时 1 秒执行
+// 7️⃣ 延时 5 秒执行
 setTimeout(() => {
     updateFooterLeft();
     updateFooterRight();
-}, 1000);
+}, 5000);
