@@ -48,10 +48,10 @@
     }
   }
 
-  // 5️⃣ 更新左侧页脚
-  function updateFooterLeft() {
+// 5️⃣ 更新左侧页脚
+function updateFooterLeft() {
     const footerLeft = document.querySelector('.server-footer-name > div:first-child');
-    if (!footerLeft) return false;
+    if (!footerLeft) return;
 
     const container = document.createElement('span');
     container.classList.add('color-animate');
@@ -59,6 +59,7 @@
     const icon = document.createElement('i');
     icon.className = 'fas fa-server';
     icon.style.marginRight = '6px';
+    icon.style.fontFamily = '"Font Awesome 6 Free"'; // 强制 Font Awesome 字体
 
     const link = document.createElement('a');
     link.href = 'https://t.me/contact/1746959833:pDG7N84llgNWazU8';
@@ -73,15 +74,14 @@
 
     const text = 'MyStatus 监控系统 ©2025';
     animateTextColor(link, text);
+
     setInterval(() => animateTextColor(link, text), 6000);
+}
 
-    return true;
-  }
-
-  // 6️⃣ 更新右侧页脚
-  function updateFooterRight() {
+// 6️⃣ 更新右侧页脚
+function updateFooterRight() {
     const footerRight = document.querySelector('.server-footer-theme');
-    if (!footerRight) return false;
+    if (!footerRight) return;
 
     const section = document.createElement('section');
     section.classList.add('fade-loop');
@@ -92,14 +92,13 @@
     a.className = 'footer-link';
     a.style.color = '#888';
     a.style.textDecoration = 'none';
-    a.innerHTML = `<i class="fab fa-github rotate-icon" style="margin-right: 6px;"></i> Powered by NeZha`;
+    a.innerHTML = `<i class="fab fa-github rotate-icon" style="margin-right: 6px; font-family: 'Font Awesome 6 Brands';"></i> Powered by NeZha`;
 
     section.appendChild(a);
     footerRight.innerHTML = '';
     footerRight.appendChild(section);
+}
 
-    return true;
-  }
 
   // 7️⃣ 等待 Font Awesome 加载 + 页脚渲染完成再执行
   loadFontAwesome(() => {
