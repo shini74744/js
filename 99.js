@@ -1,5 +1,5 @@
 (function() {
-  // 1️⃣ 只添加一次 Font Awesome
+  // 1️⃣ 动态加载 Font Awesome，只加载一次
   if (!document.getElementById('fa-script')) {
     const faLink = document.createElement('link');
     faLink.id = 'fa-script';
@@ -8,7 +8,7 @@
     document.head.appendChild(faLink);
   }
 
-  // 2️⃣ 创建 CSS 样式，只添加一次
+  // 2️⃣ 动态创建 CSS 样式，只创建一次
   if (!document.getElementById('custom-footer-style')) {
     const style = document.createElement('style');
     style.id = 'custom-footer-style';
@@ -53,12 +53,12 @@
     document.head.appendChild(style);
   }
 
-  // 3️⃣ 随机颜色函数
+  // 3️⃣ 随机颜色生成函数
   function getRandomColor() {
     return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
   }
 
-  // 4️⃣ 文字渐变动画
+  // 4️⃣ 给文字添加颜色渐变动画
   function animateTextColor(element, text) {
     element.innerHTML = '';
     for (let i = 0; i < text.length; i++) {
@@ -71,7 +71,7 @@
     }
   }
 
-  // 5️⃣ 左侧页脚
+  // 5️⃣ 更新左侧页脚
   function updateFooterLeft() {
     const footerLeft = document.querySelector('.server-footer-name > div:first-child');
     if (!footerLeft) return false;
@@ -96,12 +96,14 @@
 
     const text = 'MyStatus 监控系统 ©2025';
     animateTextColor(link, text);
+
+    // 每 6 秒重新应用颜色动画
     setInterval(() => animateTextColor(link, text), 6000);
 
     return true;
   }
 
-  // 6️⃣ 右侧页脚
+  // 6️⃣ 更新右侧页脚
   function updateFooterRight() {
     const footerRight = document.querySelector('.server-footer-theme');
     if (!footerRight) return false;
@@ -124,12 +126,12 @@
     return true;
   }
 
-  // 7️⃣ 轮询直到页脚加载完成
+  // 7️⃣ 轮询 DOM，保证即使页面渲染慢也能修改
   let tries = 0;
   const timer = setInterval(() => {
     const leftOK = updateFooterLeft();
     const rightOK = updateFooterRight();
-    if ((leftOK && rightOK) || tries > 20) {
+    if ((leftOK && rightOK) || tries > 20) { // 最多尝试 20 次
       clearInterval(timer);
     }
     tries++;
