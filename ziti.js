@@ -1,5 +1,5 @@
 (function () {
-  // 七个字体方案
+  // 字体方案（原有七个字体方案 + 空方案）
   const fontSchemes = [
     // 1. 抖音 Sans
     `
@@ -102,7 +102,10 @@
     h1, h2, h3, h4, h5 {
         font-family: 'LXGW WenKai Screen', sans-serif;
     }
-    `
+    `,
+
+    // 8. 空方案：使用系统默认字体
+    `/* 使用系统默认字体，不做任何修改 */`
   ];
 
   // 随机选择一个方案
