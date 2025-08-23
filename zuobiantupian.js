@@ -7,7 +7,7 @@ function isMobileDevice() {
 document.body.style.margin = '0';
 document.body.style.minHeight = '200vh';
 document.body.style.overflowY = 'scroll';
-document.body.style.backgroundImage = "url('your-background.jpg')"; // 替换为你的背景图
+document.body.style.backgroundImage = "url('https://t.alcy.cc/tx')"; // 替换为你的背景图
 document.body.style.backgroundSize = 'cover';
 document.body.style.backgroundPosition = 'center';
 
